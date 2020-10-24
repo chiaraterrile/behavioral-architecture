@@ -47,3 +47,11 @@ if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspeci
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/behaviour" TYPE FILE FILES "/root/Desktop/behavioral-architecture/src/behaviour/package.xml")
 endif()
 
+if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/behaviour" TYPE PROGRAM FILES "/root/Desktop/behavioral-architecture/build/behaviour/catkin_generated/installspace/talker.py")
+endif()
+
+if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/behaviour" TYPE PROGRAM FILES "/root/Desktop/behavioral-architecture/build/behaviour/catkin_generated/installspace/state_machine.py")
+endif()
+
