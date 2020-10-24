@@ -327,6 +327,12 @@ lib:FILEPATH=/opt/ros/kinetic/lib/libxmlrpcpp.so
 message_runtime_DIR:PATH=/opt/ros/kinetic/share/message_runtime/cmake
 
 //Value Computed by CMake
+motion_control_BINARY_DIR:STATIC=/root/Desktop/behavioral-architecture/build/motion_control
+
+//Value Computed by CMake
+motion_control_SOURCE_DIR:STATIC=/root/Desktop/behavioral-architecture/src/motion_control
+
+//Value Computed by CMake
 perception_BINARY_DIR:STATIC=/root/Desktop/behavioral-architecture/build/perception
 
 //Value Computed by CMake
@@ -467,7 +473,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=5
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=6
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP

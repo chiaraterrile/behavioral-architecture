@@ -127,6 +127,7 @@ if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
   include("/root/Desktop/behavioral-architecture/build/gtest/cmake_install.cmake")
   include("/root/Desktop/behavioral-architecture/build/behaviour/cmake_install.cmake")
+  include("/root/Desktop/behavioral-architecture/build/motion_control/cmake_install.cmake")
   include("/root/Desktop/behavioral-architecture/build/perception/cmake_install.cmake")
 
 endif()

@@ -199,3 +199,6 @@ include_directories(
 catkin_install_python(PROGRAMS /root/Desktop/behavioral-architecture/src/perception/src/talker.py src/state_machine.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
+catkin_install_python(PROGRAMS src/state_machine.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)

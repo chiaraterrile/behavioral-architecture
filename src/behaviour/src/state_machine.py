@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import roslib
+import random
 import rospy
 import smach
 import smach_ros
@@ -22,6 +23,11 @@ from std_msgs.msg import String
 
 flag_play = 0
 message = " "
+home = "x=0.0 y=0.0"
+x = random.randint(0,10)
+y =random.randint(0,10)
+random_coordinates = "x= "+str(x)+" y= "+str(y)
+
 
     
 def callback(data):
@@ -29,11 +35,14 @@ def callback(data):
 		global flag_play
 		global message
 		message = data.data
-		flag_play = 1
+		if message == "none" :
+			flag_play = 0
+		else :
+			flag_play = 1
 		print(flag_play)
 		
     
-def listener():
+#def listener():
 		
 
     # In ROS, nodes are uniquely named. If two nodes with the same
@@ -41,12 +50,12 @@ def listener():
     # anonymous=True flag means that rospy will choose a unique
     # name for our 'listener' node so that multiple listeners can
     # run simultaneously.
-    		rospy.init_node('listener', anonymous=True)
-		rospy.Subscriber("command", String, callback)
+    		#rospy.init_node('listener', anonymous=True)
+		#rospy.Subscriber("command", String, callback)
 		
 		
     # spin() simply keeps python from exiting until this node is stopped
-    		rospy.spin()
+    		#rospy.spin()
 def user_action():
 			
 			global flag_play
@@ -54,6 +63,10 @@ def user_action():
                         rospy.Subscriber("command", String, callback)
 		        if flag_play == 1 :
 				flag_play = 0
+				#pub = rospy.Publisher('target', String, queue_size=10)
+    				#target = message
+    				#rospy.loginfo(target)
+   				#pub.publish(target)
 				return('play')
 			else :
     				return random.choice(['sleep','normal'])
@@ -64,6 +77,9 @@ def user_action():
 # define state RandomlyGoing
 class RandomlyGoing(smach.State):
     def __init__(self):
+	global flag_play
+	global message
+	global random_coordinates
         # initialisation function, it should not wait
         smach.State.__init__(self, 
                              outcomes=['sleep','normal','play'],
@@ -73,6 +89,10 @@ class RandomlyGoing(smach.State):
     def execute(self, userdata):
         # function called when exiting from the node, it can be blacking
         time.sleep(5)
+	pub = rospy.Publisher('target', String, queue_size=10)
+    	target = random_coordinates
+    	rospy.loginfo(target)
+   	pub.publish(target)
         rospy.loginfo('Executing state RANDOMLYGOING (users = %f)'%userdata.randomlygoing_counter_in)
         userdata.randomlygoing_counter_out = userdata.randomlygoing_counter_in + 1
         return user_action()
@@ -81,6 +101,9 @@ class RandomlyGoing(smach.State):
 # define state Sleeping
 class Sleeping(smach.State):
     def __init__(self):
+	global flag_play
+	global message
+	global home
         smach.State.__init__(self, 
                              outcomes=['normal','sleep','play'],
                              input_keys=['sleeping_counter_in'],
@@ -93,6 +116,10 @@ class Sleeping(smach.State):
         while not rospy.is_shutdown():  
             time.sleep(1)
             if self.sensor_input < 5: 
+		pub = rospy.Publisher('target', String, queue_size=10)
+    		target = home
+    		rospy.loginfo(target)
+   		pub.publish(target)
                 rospy.loginfo('Executing state SLEEPING (users = %f)'%userdata.sleeping_counter_in)
                 userdata.sleeping_counter_out = userdata.sleeping_counter_in + 1
                 return user_action()
@@ -102,6 +129,8 @@ class Sleeping(smach.State):
 # define state Playing
 class Playing(smach.State):
     def __init__(self):
+	global flag_play
+	global message
         smach.State.__init__(self, 
                              outcomes=['normal','sleep','play'],
                              input_keys=['playing_counter_in'],
@@ -114,6 +143,10 @@ class Playing(smach.State):
         while not rospy.is_shutdown():  
             time.sleep(1)
             if self.sensor_input < 5: 
+		pub = rospy.Publisher('target', String, queue_size=10)
+    		target = message
+    		rospy.loginfo(target)
+   		pub.publish(target)
                 rospy.loginfo('Executing state PLAYING (users = %f)'%userdata.playing_counter_in)
                 userdata.playing_counter_out = userdata.playing_counter_in + 1
                 return user_action()

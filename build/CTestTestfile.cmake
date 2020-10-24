@@ -6,4 +6,5 @@
 # testing this directory and lists subdirectories to be tested as well.
 subdirs(gtest)
 subdirs(behaviour)
+subdirs(motion_control)
 subdirs(perception)
