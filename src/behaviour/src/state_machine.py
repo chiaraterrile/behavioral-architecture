@@ -42,7 +42,7 @@ def callback(data):
 			flag_play = 1
 		
 		#flag_normal = 1
-    
+   
 #def listener():
 		
 
