@@ -22,25 +22,29 @@ from std_msgs.msg import String
 #          $ sudo apt-get install ros-kinetic-smach-viewer
 
 flag_play = 0
+flag_normal = 0
 message = " "
 home = "x=0.0 y=0.0"
+person = "x=5.0 y=5.0"
 x = random.randint(0,10)
 y =random.randint(0,10)
-random_coordinates = "x= "+str(x)+"y= "+str(y)
+random_coordinates = "x= "+str(x)+" y= "+str(y)
 
 
     
 def callback(data):
    	 	rospy.loginfo(rospy.get_caller_id() + "I heard %s", data.data)
 		global flag_play
+		global falg_normal
 		global message
 		message = data.data
 		if message == "none" :
 			flag_play = 0
+			flag_normal = 1
 		else :
 			flag_play = 1
-		print(flag_play)
 		
+		#flag_normal = 1
     
 #def listener():
 		
@@ -59,6 +63,7 @@ def callback(data):
 def user_action():
 			
 			global flag_play
+			global flag_normal 
 			global message
                         rospy.Subscriber("command", String, callback)
 		        if flag_play == 1 :
@@ -68,8 +73,15 @@ def user_action():
     				#rospy.loginfo(target)
    				#pub.publish(target)
 				return('play')
-			else :
+			else : #flag_normal == 1 :
+			
     				return random.choice(['sleep','normal'])
+					#i = i+1
+				#return ('normal')
+				#flag_normal = 0
+				#print (flag_normal)
+				
+				
 
 
         
@@ -131,6 +143,7 @@ class Playing(smach.State):
     def __init__(self):
 	global flag_play
 	global message
+	global person
         smach.State.__init__(self, 
                              outcomes=['normal','sleep','play'],
                              input_keys=['playing_counter_in'],
@@ -144,6 +157,9 @@ class Playing(smach.State):
             time.sleep(1)
             if self.sensor_input < 5: 
 		pub = rospy.Publisher('target', String, queue_size=10)
+		target = person
+		rospy.loginfo(target)
+   		pub.publish(target)
     		target = message
     		rospy.loginfo(target)
    		pub.publish(target)
