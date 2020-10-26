@@ -24,16 +24,13 @@ from std_msgs.msg import String
 flag_play = 0
 flag_normal = 0
 message = " "
-home = "x=0.0 y=0.0"
-person = "x=5.0 y=5.0"
-x = random.randint(0,10)
-y =random.randint(0,10)
-random_coordinates = "x= "+str(x)+" y= "+str(y)
+home = "x=0.0 y=0.0 (home)"
+person = "x=5.0 y=5.0 (user)"
 
 
     
 def callback(data):
-   	 	rospy.loginfo(rospy.get_caller_id() + "I heard %s", data.data)
+   	 	#rospy.loginfo(rospy.get_caller_id() + "I heard %s", data.data)
 		global flag_play
 		global falg_normal
 		global message
@@ -68,19 +65,15 @@ def user_action():
                         rospy.Subscriber("command", String, callback)
 		        if flag_play == 1 :
 				flag_play = 0
-				#pub = rospy.Publisher('target', String, queue_size=10)
-    				#target = message
-    				#rospy.loginfo(target)
-   				#pub.publish(target)
 				return('play')
 			else : #flag_normal == 1 :
 			
-    				return random.choice(['sleep','normal'])
+    				#return random.choice(['sleep','normal'])
 					#i = i+1
 				#return ('normal')
 				#flag_normal = 0
 				#print (flag_normal)
-				
+				return ('sleep')
 				
 
 
@@ -91,7 +84,8 @@ class RandomlyGoing(smach.State):
     def __init__(self):
 	global flag_play
 	global message
-	global random_coordinates
+	
+
         # initialisation function, it should not wait
         smach.State.__init__(self, 
                              outcomes=['sleep','normal','play'],
@@ -99,14 +93,18 @@ class RandomlyGoing(smach.State):
                              output_keys=['randomlygoing_counter_out'])
         
     def execute(self, userdata):
+	x = random.randint(0,10)
+	y =random.randint(0,10)
+	random_coordinates = "x= "+str(x)+" y= "+str(y)
         # function called when exiting from the node, it can be blacking
-        time.sleep(5)
+        
 	pub = rospy.Publisher('target', String, queue_size=10)
     	target = random_coordinates
-    	rospy.loginfo(target)
+    	#rospy.loginfo(target)
    	pub.publish(target)
         rospy.loginfo('Executing state RANDOMLYGOING (users = %f)'%userdata.randomlygoing_counter_in)
         userdata.randomlygoing_counter_out = userdata.randomlygoing_counter_in + 1
+	time.sleep(10)
         return user_action()
     
 
@@ -117,26 +115,26 @@ class Sleeping(smach.State):
 	global message
 	global home
         smach.State.__init__(self, 
-                             outcomes=['normal','sleep','play'],
+                             #outcomes=['normal','sleep','play'],
+			     outcomes=['normal'],
                              input_keys=['sleeping_counter_in'],
                              output_keys=['sleeping_counter_out'])
         self.sensor_input = 0
         self.rate = rospy.Rate(200)  # Loop at 200 Hz
 
     def execute(self, userdata):
-        # simulate that we have to get 5 data samples to compute the outcome
-        while not rospy.is_shutdown():  
-            time.sleep(1)
-            if self.sensor_input < 5: 
-		pub = rospy.Publisher('target', String, queue_size=10)
-    		target = home
-    		rospy.loginfo(target)
-   		pub.publish(target)
-                rospy.loginfo('Executing state SLEEPING (users = %f)'%userdata.sleeping_counter_in)
-                userdata.sleeping_counter_out = userdata.sleeping_counter_in + 1
-                return user_action()
-            self.sensor_input += 1
-            self.rate.sleep
+        # function called when exiting from the node, it can be blacking
+        #time.sleep(10)
+	pub = rospy.Publisher('target', String, queue_size=10)
+    	target = home
+    	#rospy.loginfo(target)
+   	pub.publish(target)
+        time.sleep(15)
+        rospy.loginfo('Executing state SLEEPING (users = %f)'%userdata.sleeping_counter_in)
+        userdata.sleeping_counter_out = userdata.sleeping_counter_in + 1
+	
+        #return user_action()
+        return ('normal')
 
 # define state Playing
 class Playing(smach.State):
@@ -153,21 +151,23 @@ class Playing(smach.State):
 
     def execute(self, userdata):
         # simulate that we have to get 5 data samples to compute the outcome
-        while not rospy.is_shutdown():  
-            time.sleep(1)
-            if self.sensor_input < 5: 
-		pub = rospy.Publisher('target', String, queue_size=10)
-		target = person
-		rospy.loginfo(target)
-   		pub.publish(target)
-    		target = message
-    		rospy.loginfo(target)
-   		pub.publish(target)
-                rospy.loginfo('Executing state PLAYING (users = %f)'%userdata.playing_counter_in)
-                userdata.playing_counter_out = userdata.playing_counter_in + 1
-                return user_action()
-            self.sensor_input += 1
-            self.rate.sleep
+        
+   	pub = rospy.Publisher('target', String, queue_size=10)
+	target = person
+	#rospy.loginfo(target)
+   	pub.publish(target)
+	time.sleep(5)
+    	target = message
+    	#rospy.loginfo(target)
+   	pub.publish(target)
+	time.sleep(5)
+	target = person
+   	pub.publish(target)
+        rospy.loginfo('Executing state PLAYING (users = %f)'%userdata.playing_counter_in)
+        userdata.playing_counter_out = userdata.playing_counter_in + 1
+	time.sleep(10)
+        return ('normal')
+        
 
 #if __name__ == '__main__':
 	#state_machine()
@@ -190,10 +190,16 @@ def main():
 					    'play':'PLAYING'},
                                remapping={'randomlygoing_counter_in':'sm_counter', 
                                           'randomlygoing_counter_out':'sm_counter'})
+        #smach.StateMachine.add('SLEEPING', Sleeping(), 
+                              # transitions={'normal':'RANDOMLYGOING', 
+                                            #'sleep':'SLEEPING',
+					    #'play':'PLAYING'},
+                               #remapping={'sleeping_counter_in':'sm_counter',
+                                          #'sleeping_counter_out':'sm_counter'})
         smach.StateMachine.add('SLEEPING', Sleeping(), 
-                               transitions={'normal':'RANDOMLYGOING', 
-                                            'sleep':'SLEEPING',
-					    'play':'PLAYING'},
+                               transitions={'normal':'RANDOMLYGOING' 
+                                            
+					    },
                                remapping={'sleeping_counter_in':'sm_counter',
                                           'sleeping_counter_out':'sm_counter'})
         smach.StateMachine.add('PLAYING', Playing(), 

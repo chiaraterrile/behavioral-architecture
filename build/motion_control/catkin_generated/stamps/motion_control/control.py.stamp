@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 import rospy
+import time
 from std_msgs.msg import String
 
 def callback(data):
+    time.sleep(5)
     rospy.loginfo(rospy.get_caller_id() + " the actual position is : %s", data.data)
     
 def listener():
