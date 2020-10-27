@@ -9,54 +9,28 @@ import time
 import random
 from std_msgs.msg import String
 
-# INSTALLATION
-# - create ROS package in your workspace:
-#          $ catkin_create_pkg smach_tutorial std_msgs rospy
-# - move this file to the 'smach_tutorial/scr' folder and give running permissions to it with
-#          $ chmod +x state_machine.py
-# - run the 'roscore' and then you can run the state machine with
-#          $ rosrun smach_tutorial state_machine.py
-# - install the visualiser using
-#          $ sudo apt-get install ros-kinetic-smach-viewer
-# - run the visualiser with
-#          $ sudo apt-get install ros-kinetic-smach-viewer
 
 flag_play = 0
-flag_normal = 0
 message = " "
+#fixed position of the user and of the home
 home = "x=0.0 y=0.0 (home)"
 person = "x=5.0 y=5.0 (user)"
 
 
     
 def callback(data):
-   	 	#rospy.loginfo(rospy.get_caller_id() + "I heard %s", data.data)
+   	 	
 		global flag_play
 		global falg_normal
 		global message
 		message = data.data
-		if message == "none" :
+		#checking that I actually have a message from the publisher
+		if message == " " :
 			flag_play = 0
-			flag_normal = 1
 		else :
 			flag_play = 1
 		
-		#flag_normal = 1
-    
-#def listener():
-		
 
-    # In ROS, nodes are uniquely named. If two nodes with the same
-    # name are launched, the previous one is kicked off. The
-    # anonymous=True flag means that rospy will choose a unique
-    # name for our 'listener' node so that multiple listeners can
-    # run simultaneously.
-    		#rospy.init_node('listener', anonymous=True)
-		#rospy.Subscriber("command", String, callback)
-		
-		
-    # spin() simply keeps python from exiting until this node is stopped
-    		#rospy.spin()
 def user_action():
 			
 			global flag_play
@@ -66,13 +40,7 @@ def user_action():
 		        if flag_play == 1 :
 				flag_play = 0
 				return('play')
-			else : #flag_normal == 1 :
-			
-    				#return random.choice(['sleep','normal'])
-					#i = i+1
-				#return ('normal')
-				#flag_normal = 0
-				#print (flag_normal)
+			else : 
 				return ('sleep')
 				
 
@@ -85,8 +53,6 @@ class RandomlyGoing(smach.State):
 	global flag_play
 	global message
 	
-
-        # initialisation function, it should not wait
         smach.State.__init__(self, 
                              outcomes=['sleep','normal','play'],
                              input_keys=['randomlygoing_counter_in'],
@@ -96,12 +62,12 @@ class RandomlyGoing(smach.State):
 	x = random.randint(0,10)
 	y =random.randint(0,10)
 	random_coordinates = "x= "+str(x)+" y= "+str(y)
-        # function called when exiting from the node, it can be blacking
         
+        #defining the publisher
 	pub = rospy.Publisher('target', String, queue_size=10)
     	target = random_coordinates
-    	#rospy.loginfo(target)
-   	pub.publish(target)
+    	pub.publish(target)
+
         rospy.loginfo('Executing state RANDOMLYGOING (users = %f)'%userdata.randomlygoing_counter_in)
         userdata.randomlygoing_counter_out = userdata.randomlygoing_counter_in + 1
 	time.sleep(10)
@@ -115,25 +81,23 @@ class Sleeping(smach.State):
 	global message
 	global home
         smach.State.__init__(self, 
-                             #outcomes=['normal','sleep','play'],
 			     outcomes=['normal'],
                              input_keys=['sleeping_counter_in'],
                              output_keys=['sleeping_counter_out'])
-        self.sensor_input = 0
-        self.rate = rospy.Rate(200)  # Loop at 200 Hz
-
+        
     def execute(self, userdata):
-        # function called when exiting from the node, it can be blacking
-        #time.sleep(10)
+        
+	#defining the publisher
 	pub = rospy.Publisher('target', String, queue_size=10)
     	target = home
-    	#rospy.loginfo(target)
    	pub.publish(target)
+	#remains in the sleeping state for a certain amount of time
         time.sleep(15)
+
         rospy.loginfo('Executing state SLEEPING (users = %f)'%userdata.sleeping_counter_in)
         userdata.sleeping_counter_out = userdata.sleeping_counter_in + 1
 	
-        #return user_action()
+        #after being in the sleeping state it comes back to normal
         return ('normal')
 
 # define state Playing
@@ -143,37 +107,34 @@ class Playing(smach.State):
 	global message
 	global person
         smach.State.__init__(self, 
-                             outcomes=['normal','sleep','play'],
+                             outcomes=['normal'],
                              input_keys=['playing_counter_in'],
                              output_keys=['playing_counter_out'])
-        self.sensor_input = 0
-        self.rate = rospy.Rate(200)  # Loop at 200 Hz
+       
 
     def execute(self, userdata):
-        # simulate that we have to get 5 data samples to compute the outcome
-        
+       
+        #defining the publisher
    	pub = rospy.Publisher('target', String, queue_size=10)
 	target = person
-	#rospy.loginfo(target)
    	pub.publish(target)
 	time.sleep(5)
     	target = message
-    	#rospy.loginfo(target)
    	pub.publish(target)
 	time.sleep(5)
 	target = person
    	pub.publish(target)
+
         rospy.loginfo('Executing state PLAYING (users = %f)'%userdata.playing_counter_in)
         userdata.playing_counter_out = userdata.playing_counter_in + 1
 	time.sleep(10)
+	#after being in the playing state it comes back to normal
         return ('normal')
         
 
-#if __name__ == '__main__':
-	#state_machine()
+
         
 def main():
-    #listener()
   
     rospy.init_node('smach_example_state_machine')
 
@@ -190,22 +151,18 @@ def main():
 					    'play':'PLAYING'},
                                remapping={'randomlygoing_counter_in':'sm_counter', 
                                           'randomlygoing_counter_out':'sm_counter'})
-        #smach.StateMachine.add('SLEEPING', Sleeping(), 
-                              # transitions={'normal':'RANDOMLYGOING', 
-                                            #'sleep':'SLEEPING',
-					    #'play':'PLAYING'},
-                               #remapping={'sleeping_counter_in':'sm_counter',
-                                          #'sleeping_counter_out':'sm_counter'})
+       
         smach.StateMachine.add('SLEEPING', Sleeping(), 
                                transitions={'normal':'RANDOMLYGOING' 
                                             
 					    },
                                remapping={'sleeping_counter_in':'sm_counter',
                                           'sleeping_counter_out':'sm_counter'})
+
         smach.StateMachine.add('PLAYING', Playing(), 
-                               transitions={'normal':'RANDOMLYGOING', 
-                                            'sleep':'SLEEPING',
-					    'play':'PLAYING'},
+                               transitions={'normal':'RANDOMLYGOING'}, 
+                                            
+							
                                remapping={'playing_counter_in':'sm_counter',
                                           'plying_counter_out':'sm_counter'})
 

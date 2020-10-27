@@ -4,7 +4,7 @@ The aim of this project is to send commands to a simulated robot which enters in
 SOFTWARE ARCHITECTURE:
 The architecture is composed of three components:
  - Perception: which is a ROS node publishing to a topic /command and sends a string of 2D coordinates every time we want to send the command 'play' to the robot
- - Behaviour : which is a ROS node composed of a finite state machine. This state machine subscribe to the topic /command in order to receive the command every time it arrives. The machine can reach three states : 'normal','sleep' and 'play' , and when is in a certain state it publishes the position (always represented as a string) to the topic /target
+ - Behaviour : which is a ROS node composed of a finite state machine. This state machine subscribe to the topic /command in order to receive the command every time it arrives. The machine can reach three states : 'randomlygoing','sleeping' and 'playing' (which correspond to the commands 'normal','sleep' and 'play'), and when is in a certain state it publishes the position (always represented as a string) to the topic /target
  - Motion Control : which is a ROS node subscribing to the topic /target in order to recive the actual postion of the robot 
 
 PACKAGES and FILES:
