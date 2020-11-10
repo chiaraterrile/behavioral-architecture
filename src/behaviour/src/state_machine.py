@@ -21,10 +21,9 @@ person = "x=5.0 y=5.0 (user)"
 def callback(data):
    	 	
 		global flag_play
-		global falg_normal
 		global message
 		message = data.data
-		#checking that I actually have a message from the publisher
+		#checking that there's actually a message from the publisher
 		if message == " " :
 			flag_play = 0
 		else :
@@ -33,8 +32,7 @@ def callback(data):
 
 def user_action():
 			
-			global flag_play
-			global flag_normal 
+			global flag_play 
 			global message
                         rospy.Subscriber("command", String, callback)
 		        if flag_play == 1 :
