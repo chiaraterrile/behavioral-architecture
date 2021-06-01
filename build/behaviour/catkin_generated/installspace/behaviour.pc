@@ -1,8 +1,0 @@
-prefix=/root/Desktop/behavioral-architecture/install
-
-Name: behaviour
-Description: Description of behaviour
-Version: 0.0.0
-Cflags: 
-Libs: -L/root/Desktop/behavioral-architecture/install/lib 
-Requires: 

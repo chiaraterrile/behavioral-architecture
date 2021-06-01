@@ -1,2 +1,0 @@
-behaviour:motion_control:perception
--DCATKIN_DEVEL_PREFIX=/root/Desktop/behavioral-architecture/devel -DCMAKE_INSTALL_PREFIX=/root/Desktop/behavioral-architecture/install -G Unix Makefiles

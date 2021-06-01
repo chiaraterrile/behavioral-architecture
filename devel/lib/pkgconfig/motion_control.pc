@@ -1,8 +1,0 @@
-prefix=/root/Desktop/behavioral-architecture/devel
-
-Name: motion_control
-Description: Description of motion_control
-Version: 0.0.0
-Cflags: 
-Libs: -L/root/Desktop/behavioral-architecture/devel/lib 
-Requires: 

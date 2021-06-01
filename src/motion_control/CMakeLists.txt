@@ -13,7 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   std_msgs
   turtlesim
-  custom_messages
+  #custom_messages
 )
 
 ## System dependencies are found with CMake's conventions
@@ -199,7 +199,7 @@ include_directories(
 # endif()
 
 ## Add folders to be run by python nosetests
-# catkin_add_nosetests(test)
-catkin_install_python(PROGRAMS /root/Desktop/behavioral-architecture/src/behaviour/src/state_machine.py src/control.py
+# catkin_add_nosetests(test) /home/chiara/Desktop/behavioral-architecture/src/behaviour/src/state_machine.py
+catkin_install_python(PROGRAMS src/control.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
