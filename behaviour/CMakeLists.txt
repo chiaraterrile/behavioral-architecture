@@ -199,6 +199,4 @@ include_directories(
 catkin_install_python(PROGRAMS src/state_machine.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
-catkin_install_python(PROGRAMS src/state_machine.py
-  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-)
+
